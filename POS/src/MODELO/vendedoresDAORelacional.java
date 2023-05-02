@@ -25,7 +25,7 @@ public class vendedoresDAORelacional implements vendedoresDAO {
     
     @Override
     public LinkedList<vendedores_new> listar_new() {
-        String sql = "select * from usuarios";
+        String sql = "select * from vendedores";
         LinkedList<vendedores_new> listar = new LinkedList<>();
         
         try {
@@ -40,13 +40,15 @@ public class vendedoresDAORelacional implements vendedoresDAO {
         } catch (Exception e) {
             System.out.println(e);
         }
-        return null; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null; 
     }
+    
+
+
 
     @Override
     public vendedores_new obtener(int codigo) {
-        String sql = "select * from vendedores WHERE usuario_id = ?";
-        LinkedList<vendedores_new> listar = new LinkedList<>();
+        String sql = "select * from vendedores WHERE codigo = ?";
         
         try {
             //inicializa la base de datos
@@ -69,7 +71,7 @@ public class vendedoresDAORelacional implements vendedoresDAO {
 
     @Override
     public void crear(vendedores_new vendedor) {
-        String sql = "INSERT INTO vendedores (codigo, nombre, caja, ventas, contrasenia) values(?,?,?,?,?);";
+        String sql = "INSERT INTO vendedores (codigo, nombre, caja, ventas, genero, contrasenia) values(?,?,?,?,?,?);";
         
         try {
              con = acceso.Conectar();
@@ -79,7 +81,8 @@ public class vendedoresDAORelacional implements vendedoresDAO {
             ps.setString(2, vendedor.getNombre());
             ps.setInt(3, vendedor.getCaja());
             ps.setInt(4, vendedor.getVentas());
-            ps.setString(5, vendedor.getContrasenia());
+            ps.setString(5, vendedor.getGenero());
+            ps.setString(6, vendedor.getContrasenia());
             ps.executeUpdate();
             
         } catch (Exception e) {
@@ -89,7 +92,7 @@ public class vendedoresDAORelacional implements vendedoresDAO {
 
     @Override
     public void modificar(vendedores_new vendedor) {
-        String sql = "UPDATE vendedor set nombre =?,caja=?,ventas=?, contrasenia=? WHERE vendedor_id = ?;";
+        String sql = "UPDATE vendedores set nombre =?,caja=?,ventas=?, genero = ?, contrasenia=? WHERE codigo = ?;";
         
         try {
              con = acceso.Conectar();
@@ -97,8 +100,9 @@ public class vendedoresDAORelacional implements vendedoresDAO {
             ps.setString(1, vendedor.getNombre());
             ps.setInt(2, vendedor.getCaja());
             ps.setInt(3, vendedor.getVentas());
-            ps.setString(4, vendedor.getContrasenia());
-            ps.setInt(5, vendedor.getCodigo());
+             ps.setString(4, vendedor.getGenero());
+            ps.setString(5, vendedor.getContrasenia());
+            ps.setInt(6, vendedor.getCodigo());
             ps.executeUpdate();
             
         } catch (Exception e) {
@@ -107,13 +111,13 @@ public class vendedoresDAORelacional implements vendedoresDAO {
     }
 
     @Override
-    public void eliminar(int codigo_id) {
-               String sql = "DELETE FROM usuarios WHERE usuario_id = ?;";
+    public void eliminar(int codigo) {
+        String sql = "DELETE FROM vendedores WHERE codigo = ?;";
         
         try {
              con = acceso.Conectar();
             ps = con.prepareStatement(sql);
-            ps.setInt(1, codigo_id);
+            ps.setInt(1, codigo);
             ps.executeUpdate();
             
         } catch (Exception e) {

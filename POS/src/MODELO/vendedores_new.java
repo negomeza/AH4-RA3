@@ -1,26 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package MODELO;
 
-import java.math.BigDecimal;
+import java.util.LinkedList;
 
-/**
- *
- * @author NELSON
- */
 public class vendedores_new {
+    
+    public static LinkedList<clientes_new> datosClientes = new LinkedList<>();
     
     int codigo;
     String nombre;
     int caja;
-    int ventas;
+    int ventas; 
     String genero;
     String contrasenia;
 
     public vendedores_new(int codigo, String nombre, int caja, int ventas, String genero, String contrasenia) {
         this.codigo = codigo;
+        this.nombre = nombre;
+        this.caja = caja;
+        this.ventas = ventas;
+        this.genero = genero;
+        this.contrasenia = contrasenia;
+    }
+
+    public vendedores_new(String nombre, int caja, int ventas, String genero, String contrasenia) {
         this.nombre = nombre;
         this.caja = caja;
         this.ventas = ventas;

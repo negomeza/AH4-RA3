@@ -4,7 +4,13 @@
  */
 package VISTA;
 
+import MODELO.clientesDAORelacional;
+import MODELO.clientes_new;
 import MODELO.productos;
+import MODELO.productosDAORelacional;
+import MODELO.productos_new;
+import MODELO.vendedoresDAORelacional;
+import MODELO.vendedores_new;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -114,42 +120,52 @@ public class CargaProductos extends javax.swing.JFrame {
     }
     
     
-    public void actualizarProductos(){
-        try {
-            // Leer los datos actuales del archivo y guardarlos en una nueva LinkedList
-            FileInputStream fileIn = new FileInputStream("productos.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            LinkedList<productos> listaProductosActual = (LinkedList<productos>) in.readObject();
-            in.close();
-            fileIn.close();
-
-            // Buscar el vendedor a actualizar en la nueva LinkedList y actualizar sus datos
-            for (productos productoActual : listaProductosActual) {
-                if (productoActual.getCodigo() == Integer.parseInt(txtCodigoProducto.getText())) {
-                    productoActual.setNombre(txtNombre.getText());
-                    productoActual.setDescripcion(txtDescripcionProd.getText());
-                    productoActual.setCantidad(Integer.parseInt(txtCantidadProd.getText()));
-                    productoActual.setPrecio(new BigDecimal(txtPrecio.getText()));
-                    break;
-                }
-            }
-
-            // Escribir la nueva LinkedList actualizada en el archivo
-            FileOutputStream fileOut = new FileOutputStream("productos.dat");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(listaProductosActual);
-            out.close();
-            fileOut.close();
-
-            JOptionPane.showMessageDialog(null, "Producto actualizado exitosamente");
-
-            Modulos ad = new Modulos();
-            ad.cambioProducto(true);
-            dispose();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//    public void actualizarProductos(){
+//        try {
+//            // Leer los datos actuales del archivo y guardarlos en una nueva LinkedList
+//            FileInputStream fileIn = new FileInputStream("productos.dat");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            LinkedList<productos> listaProductosActual = (LinkedList<productos>) in.readObject();
+//            in.close();
+//            fileIn.close();
+//
+//            // Buscar el vendedor a actualizar en la nueva LinkedList y actualizar sus datos
+//            for (productos productoActual : listaProductosActual) {
+//                if (productoActual.getCodigo() == Integer.parseInt(txtCodigoProducto.getText())) {
+//                    productoActual.setNombre(txtNombre.getText());
+//                    productoActual.setDescripcion(txtDescripcionProd.getText());
+//                    productoActual.setCantidad(Integer.parseInt(txtCantidadProd.getText()));
+//                    productoActual.setPrecio(new BigDecimal(txtPrecio.getText()));
+//                    break;
+//                }
+//            }
+//
+//            // Escribir la nueva LinkedList actualizada en el archivo
+//            FileOutputStream fileOut = new FileOutputStream("productos.dat");
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(listaProductosActual);
+//            out.close();
+//            fileOut.close();
+//
+//            JOptionPane.showMessageDialog(null, "Producto actualizado exitosamente");
+//
+//            Modulos ad = new Modulos();
+//            ad.cambioProducto(true);
+//            dispose();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    
+    public void enviar()
+    {
+        productos_new pro = new productos_new(txtNombre.getText(), txtDescripcionProd.getText(), Integer.parseInt(txtCantidadProd.getText()), Integer.parseInt(txtPrecio.getText()));
+        productosDAORelacional sd = new productosDAORelacional();
+        sd.crear(pro);
+        Modulos mod = new Modulos();
+        mod.setVisible(true);
+        dispose();
     }
     
     
@@ -174,6 +190,29 @@ public class CargaProductos extends javax.swing.JFrame {
 
     }
     
+    public void editarProductos(int codigo) {
+        
+        productosDAORelacional sd = new productosDAORelacional();
+        productos_new producto = sd.obtener(codigo);
+        txtCodigoProducto.setText(producto.getCodigo()+ "");
+        txtNombre.setText(producto.getNombre() + "");
+        txtDescripcionProd.setText(producto.getDescripcion()+ "");
+        txtCantidadProd.setText(producto.getCantidad()+ "");
+        txtPrecio.setText(producto.getPrecio()+ "");
+            
+    }
+    
+    
+    
+    public void enviar_update()
+    {
+        productos_new pro = new productos_new (Integer.parseInt(txtCodigoProducto.getText()),txtNombre.getText(), txtDescripcionProd.getText(),Integer.parseInt(txtCantidadProd.getText()), Integer.parseInt(txtPrecio.getText()));
+        productosDAORelacional sd = new productosDAORelacional();
+        sd.modificar(pro);
+        Modulos mod = new Modulos();
+        mod.setVisible(true);
+        dispose();
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -279,23 +318,28 @@ public class CargaProductos extends javax.swing.JFrame {
 
     private void btnCrearProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearProdActionPerformed
         
-        try {
-            FileInputStream fileIn = new FileInputStream("productos.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            listaProductos = (LinkedList<productos>) in.readObject();
-            in.close();
-            fileIn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        
+        if (txtNombre.getText().isEmpty() && txtDescripcionProd.getText().isEmpty()
+            && txtCantidadProd.getText().isEmpty() && txtPrecio.getText().isEmpty() 
+                ) 
+        {
+            JOptionPane.showMessageDialog(null, "Llena todos los campos");
+        } else {
+            enviar();
         }
-
-        
-        CreaListaProducto();
-        
     }//GEN-LAST:event_btnCrearProdActionPerformed
 
     private void btnActualizarProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarProdActionPerformed
-        actualizarProductos();
+                
+        if (txtNombre.getText().isEmpty() && txtDescripcionProd.getText().isEmpty()
+            && txtCantidadProd.getText().isEmpty() && txtPrecio.getText().isEmpty() 
+                ) 
+        {
+            JOptionPane.showMessageDialog(null, "Llena todos los campos");
+        } else {
+           enviar_update();
+        }
+        
     }//GEN-LAST:event_btnActualizarProdActionPerformed
 
     /**

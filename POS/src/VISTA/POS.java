@@ -3,6 +3,8 @@
 package VISTA;
 
 import MODELO.vendedores;
+import MODELO.vendedoresDAORelacional;
+import MODELO.vendedores_new;
 import VISTA.ModuloVentas;
 import java.awt.Color;
 import java.io.FileInputStream;
@@ -140,54 +142,93 @@ public class POS extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
-    private LinkedList<vendedores> listaVendedores = new LinkedList<vendedores>();
+    private LinkedList<vendedores_new> listaVendedores = new LinkedList<vendedores_new>();
+
+    
+//    public void cargar(){
+//        try {
+//            FileInputStream fileIn = new FileInputStream("vendedores.dat");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            
+//            //tomamos la lista ya creada
+//            listaVendedores = (LinkedList<vendedores>) in.readObject();
+//            in.close();
+//            fileIn.close();
+//            System.out.println("La lista se ha deserializado correctamente");
+//           
+//            
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
     
     public void cargar(){
-        try {
-            FileInputStream fileIn = new FileInputStream("vendedores.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            
-            //tomamos la lista ya creada
-            listaVendedores = (LinkedList<vendedores>) in.readObject();
-            in.close();
-            fileIn.close();
-            System.out.println("La lista se ha deserializado correctamente");
-           
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    try {
+        
+    vendedoresDAORelacional vd = new vendedoresDAORelacional();
+    // Obtener la lista de vendedores desde la base de datos
+        listaVendedores = vd.listar_new();
+
+        System.out.println("La lista se ha cargado correctamente desde la base de datos");
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+    
+//    public void login() {
+//    cargar(); // Cargar la lista de vendedores desde el archivo
+//    
+//    if (txtCodigo.getText().equals("admin") && pswContrasenia.getText().equals("admin")) {
+//        Modulos ad = new Modulos();
+//        ad.cambioVendedor(true);
+//        dispose();
+//    } else if 
+//            (
+//            //condicion para validar si el vendedor esta en mi lista de vendedores SQL
+//            ){
+//         ModuloVentas ad2 = new ModuloVentas();
+//         ad2.cambioModuloVentas(false);
+//    }
+//    }
+
+    public static String nombreVendedor;
     
     public void login() {
     cargar(); // Cargar la lista de vendedores desde el archivo
-    
-    if (txtCodigo.getText().equals("admin") && pswContrasenia.getText().equals("admin")) {
+
+    String codigoVendedor = txtCodigo.getText();
+    String contrasenia = pswContrasenia.getText();
+
+    if (codigoVendedor.equals("admin") && contrasenia.equals("admin")) {
         Modulos ad = new Modulos();
         ad.cambioVendedor(true);
         dispose();
     } else {
-        // Buscar el vendedor en la lista
-        vendedores vendedor = null;
-        for (vendedores v : listaVendedores) {
-            if (v.getCodigo() == Integer.parseInt(txtCodigo.getText())) {
-                vendedor = v;
+        vendedoresDAORelacional vd = new vendedoresDAORelacional();
+        LinkedList<vendedores_new> vendedores = vd.listar_new();
+
+        boolean vendedorEncontrado = false;
+        for (vendedores_new vendedor : vendedores) {
+            if (vendedor.getCodigo() == Integer.parseInt(codigoVendedor) && vendedor.getContrasenia().equals(contrasenia)) {
+                vendedorEncontrado = true;
+                
+                 nombreVendedor = vendedor.getNombre();
                 break;
-            } else {
-                 vendedor = null;
             }
         }
-        
-        if (vendedor != null && vendedor.getContrasenia().equals(pswContrasenia.getText())) {
-            ModuloVentas ad = new ModuloVentas();
-            ad.cambioModuloVentas(false);
+
+        if (vendedorEncontrado) {
+            ModuloVentas ad2 = new ModuloVentas();
+            ad2.cambioModuloVentas(false);
             dispose();
-            //ad.Bienvenida(vendedor.nombre);
         } else {
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+            JOptionPane.showMessageDialog(null, "Código de vendedor o contraseña incorrectos");
         }
     }
-    }
+    
+}
 
 
     /**

@@ -6,6 +6,10 @@ package VISTA;
 
 import MODELO.productos;
 import MODELO.clientes;
+import MODELO.clientesDAORelacional;
+import MODELO.clientes_new;
+import MODELO.productosDAORelacional;
+import MODELO.productos_new;
 import MODELO.vendedores;
 import MODELO.sucursales;
 import java.awt.Color;
@@ -19,6 +23,8 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import MODELO.vendedores_new;
+import MODELO.vendedoresDAORelacional;
 
 /**
  *
@@ -26,15 +32,142 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Modulos extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Modulos
-     */
+    
+    
+    DefaultTableModel tabla2; 
+    
+    
+    private void datos_vendedor()
+    {
+        String columnas[] = {"Codigo","Nombre","Caja","Ventas","Genero"};
+        tabla2 = new DefaultTableModel(null,columnas);
+        vendedoresDAORelacional vd = new vendedoresDAORelacional();
+        for (vendedores_new dat : vd.listar_new()) {
+            Object ayuda [] = new Object[5];
+            ayuda[0] = dat.getCodigo();
+            ayuda[1] = dat.getNombre();
+            ayuda[2] = dat.getCaja();
+            ayuda[3] = dat.getVentas();
+            ayuda[4] = dat.getGenero();
+            //ayuda[5] = dat.getContrasenia();
+            tabla2.addRow(ayuda);
+        }
+        tblVendedores.setModel(tabla2);
+    }
+    
+    
+    
+    
+    
+    DefaultTableModel tabla3; 
+    
+    
+    private void datos_producto()
+    {
+        String columnas[] = {"Codigo","Nombre","Descripcion","Cantidad","Precio"};
+        tabla3 = new DefaultTableModel(null,columnas);
+        productosDAORelacional vd = new productosDAORelacional();
+        for (productos_new dat : vd.listar_new()) {
+            Object ayuda [] = new Object[5];
+            ayuda[0] = dat.getCodigo();
+            ayuda[1] = dat.getNombre();
+            ayuda[2] = dat.getDescripcion();
+            ayuda[3] = dat.getCantidad();
+            ayuda[4] = dat.getPrecio();
+            //ayuda[5] = dat.getContrasenia();
+            tabla3.addRow(ayuda);
+        }
+        tblProductos.setModel(tabla3);
+    }
+    
+    
+    DefaultTableModel tabla4; 
+    
+    
+    private void datos_cliente()
+    {
+        String columnas[] = {"Codigo","Nombre","Nit","Correo","Genero"};
+        tabla4 = new DefaultTableModel(null,columnas);
+        clientesDAORelacional vd = new clientesDAORelacional();
+        for (clientes_new dat : vd.listar_new()) {
+            Object ayuda [] = new Object[5];
+            ayuda[0] = dat.getCodigo();
+            ayuda[1] = dat.getNombre();
+            ayuda[2] = dat.getNit();
+            ayuda[3] = dat.getCorreo();
+            ayuda[4] = dat.getGenero();
+            tabla4.addRow(ayuda);
+        }
+        tblClientes.setModel(tabla4);
+    }
+    
+    
+    private void enviar_datos_vendedor()
+    {
+       int codigo = (int) tblVendedores.getValueAt(tblVendedores.getSelectedRow(), 0);
+        CargaVendedores ven = new CargaVendedores();
+        ven.editarVendedor(codigo);
+        ven.setVisible(true);
+        dispose();
+    }
+    
+    private void enviar_datos_producto()
+    {
+       int codigo = (int) tblProductos.getValueAt(tblProductos.getSelectedRow(), 0);
+        CargaProductos ven = new CargaProductos();
+        ven.editarProductos(codigo);
+        ven.setVisible(true);
+        dispose();
+    }
+    
+    private void enviar_datos_cliente()
+    {
+       int codigo = (int) tblClientes.getValueAt(tblClientes.getSelectedRow(), 0);
+        CargaClientes cli = new CargaClientes();
+        cli.editarClientes(codigo);
+        cli.setVisible(true);
+        dispose();
+    }
+    
+      private void eliminar_vendedor()
+    {
+       int codigo = (int) tblVendedores.getValueAt(tblVendedores.getSelectedRow(), 0);
+        vendedoresDAORelacional sd = new vendedoresDAORelacional();
+        sd.eliminar(codigo);
+        dispose();
+        Modulos vd = new Modulos();
+        vd.setVisible(true);
+    }
+      
+      
+      private void eliminar_producto()
+    {
+       int codigo = (int) tblProductos.getValueAt(tblProductos.getSelectedRow(), 0);
+        productosDAORelacional sd = new productosDAORelacional();
+        sd.eliminar(codigo);
+        dispose();
+        Modulos vd = new Modulos();
+        vd.setVisible(true);
+    }
+      
+      private void eliminar_cliente()
+    {
+       int codigo = (int) tblClientes.getValueAt(tblClientes.getSelectedRow(), 0);
+        clientesDAORelacional sd = new clientesDAORelacional();
+        sd.eliminar(codigo);
+        dispose();
+        Modulos vd = new Modulos();
+        vd.setVisible(true);
+    }
+    
     public Modulos() {
         initComponents();
-        llena_tabla_vendedores();
+        //llena_tabla_vendedores();
         llena_tabla_clientes();
-        llena_tabla_productos();
         llena_tabla_sucursales();
+        datos_vendedor();
+        datos_producto();
+        datos_cliente();
     }
 
    private int seleccionar;
@@ -150,38 +283,7 @@ public class Modulos extends javax.swing.JFrame {
         
         }
         
-        public void llena_tabla_productos() {
- 
-        try {
-            FileInputStream fileIn = new FileInputStream("productos.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            
-            //tomamos la lista ya creada
-            listaProductos = (LinkedList<productos>) in.readObject();
-            in.close();
-            fileIn.close();
-            System.out.println("La lista de productos se ha deserializado correctamente");
-            
-            String columnas[] = {"codigo", "nombre", "Descripción","cantidad","precio"};
-            DefaultTableModel t1 = new DefaultTableModel(null, columnas);
-
-            for (productos v : listaProductos) {
-                Object[] fila = new Object[5];
-                fila[0] = v.getCodigo();
-                fila[1] = v.getNombre();
-                fila[2] = v.getDescripcion();
-                fila[3] = v.getCantidad();
-                fila[4] = v.getPrecio();
-                t1.addRow(fila);
-            }
-            
-            tblProductos.setModel(t1);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         
-        }
         
         
         public void llena_tabla_sucursales() {
@@ -731,25 +833,9 @@ public class Modulos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        
-        try {
-            FileInputStream fileIn = new FileInputStream("vendedores.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            
-            //tomamos la lista ya creada
-            listaVendedores = (LinkedList<vendedores>) in.readObject();
-            in.close();
-            fileIn.close();
-         
-            CargaVendedores cv = new CargaVendedores();
+      
 
-            cv.editarVendedor(listaVendedores.get(tblVendedores.getSelectedRow()));
-            
-            dispose();
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-        }  
+      enviar_datos_vendedor();
         
     }//GEN-LAST:event_btnActualizarActionPerformed
 
@@ -759,8 +845,7 @@ public class Modulos extends javax.swing.JFrame {
     }//GEN-LAST:event_tblVendedoresMouseClicked
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        eliminar(tblVendedores.getSelectedRow());
-        System.out.println(tblVendedores.getSelectedRow());
+        eliminar_vendedor();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
@@ -776,63 +861,28 @@ public class Modulos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearClienteActionPerformed
 
     private void btnActualizarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarClienteActionPerformed
-        try {
-            FileInputStream fileIn = new FileInputStream("clientes.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            
-            //tomamos la lista ya creada
-            listaClientes = (LinkedList<clientes>) in.readObject();
-            in.close();
-            fileIn.close();
-         
-            CargaClientes cv = new CargaClientes();
-
-            cv.editarCliente(listaClientes.get(tblClientes.getSelectedRow()));
-            
-            dispose();
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        enviar_datos_cliente();
     }//GEN-LAST:event_btnActualizarClienteActionPerformed
 
     private void btnEliminarCliienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCliienteActionPerformed
-        eliminarCliente(tblClientes.getSelectedRow());
-        System.out.println(tblClientes.getSelectedRow());
+        eliminar_cliente();
     }//GEN-LAST:event_btnEliminarCliienteActionPerformed
 
     private void btnCrearProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearProductoActionPerformed
-            
+             
         CargaProductos prod = new CargaProductos();
         prod.cambioCreaProducto(true);
         dispose();
+
+        
     }//GEN-LAST:event_btnCrearProductoActionPerformed
 
     private void btnActualizarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarProductoActionPerformed
-                
-        try {
-            FileInputStream fileIn = new FileInputStream("productos.dat");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            
-            //tomamos la lista ya creada
-            listaProductos = (LinkedList<productos>) in.readObject();
-            in.close();
-            fileIn.close();
-         
-            CargaProductos prod = new CargaProductos();
-
-            prod.editarProductos(listaProductos.get(tblProductos.getSelectedRow()));
-            
-            dispose();
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
+        enviar_datos_producto();
     }//GEN-LAST:event_btnActualizarProductoActionPerformed
 
     private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
-        eliminarProducto(tblProductos.getSelectedRow());
-        System.out.println(tblProductos.getSelectedRow());
+       eliminar_producto();
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
     private void btnCreaSucursalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreaSucursalesActionPerformed

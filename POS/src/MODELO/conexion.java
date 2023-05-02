@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 
 public class conexion {
     Connection con;
-    String url = "jdbc:mysql://localhost:3310/evalti";
+    String url = "jdbc:mysql://localhost:3306/pos";
     String user="root";
     String pass="";
     

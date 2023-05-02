@@ -1,24 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package MODELO;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 
-
 public class productos_new {
-      public static LinkedList<productos_new> datosProductos = new LinkedList<>();
+    public static LinkedList<productos_new> datosProductos = new LinkedList<>();
     
     int codigo;
     String nombre;
     String descripcion;
     int cantidad;
-    BigDecimal precio;
+    int precio;
 
-    public productos_new(int codigo, String nombre, String descripcion, int cantidad, BigDecimal precio) {
+    public productos_new(int codigo, String nombre, String descripcion, int cantidad, int precio) {
         this.codigo = codigo;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.cantidad = cantidad;
+        this.precio = precio;
+    }
+
+    public productos_new(String nombre, String descripcion, int cantidad, int precio) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.cantidad = cantidad;
@@ -65,13 +67,14 @@ public class productos_new {
         this.cantidad = cantidad;
     }
 
-    public BigDecimal getPrecio() {
+    public int getPrecio() {
         return precio;
     }
 
-    public void setPrecio(BigDecimal precio) {
+    public void setPrecio(int precio) {
         this.precio = precio;
     }
+
     
     
 }

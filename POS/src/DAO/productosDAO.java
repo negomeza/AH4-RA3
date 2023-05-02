@@ -5,23 +5,18 @@
 package DAO;
 
 import MODELO.productos_new;
-import MODELO.vendedores_new;
 import java.util.LinkedList;
 
-        
-/**
- *
- * @author NELSON
- */
+
 public interface productosDAO {
     //Vamoa a crear los metodos que queremos ejecutar
     public LinkedList<productos_new> listar_new();
     
     public productos_new obtener(int codigo);
     
-    public void crear(productos_new vendedor);
+    public void crear(productos_new producto);
     
-    public void modificar(productos_new vendedor);
+    public void modificar(productos_new producto);
     
     public void eliminar(int codigo);
 }
